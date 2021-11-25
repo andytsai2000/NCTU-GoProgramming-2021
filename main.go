@@ -44,7 +44,7 @@ var bookshelf = []Book{
 }
 
 func getBooks(c *gin.Context) {
-	c.IntentedJSON(http.StatusOK, bookshelf)
+	c.IndentedJSON(http.StatusOK, bookshelf)
 }
 func getBook(c *gin.Context) {
 }
