@@ -8,17 +8,17 @@ import (
 )
 
 type Book struct {
-	id    string `json:"id"`
-	name  string `json:"name"`
-	pages string `json:"pages"`
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Pages string `json:"pages"`
 }
 
 var bookshelf = []Book{
 	// init data
 	{
-		id:    "1",
-		name:  "Blue Bird",
-		pages: "500",
+		Id:    "1",
+		Name:  "Blue Bird",
+		Pages: "500",
 	},
 }
 
