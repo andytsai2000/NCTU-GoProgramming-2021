@@ -8,56 +8,76 @@ import (
 )
 
 type Book struct {
-	// write your own struct
-	id     string `json:"id"`
-	title  string `json:"title"`
-	author string `json:"author"`
+	id    string `json:"id"`
+	name  string `json:"name"`
+	pages string `json:"pages"`
 }
 
 var bookshelf = []Book{
 	// init data
 	{
-		id:     "0001",
-		title:  "aa bird",
-		author: "cat",
-	},
-	{
-		id:     "0002",
-		title:  "aa bird 2",
-		author: "cat 2",
-	},
-	{
-		id:     "0003",
-		title:  "aa bird 3",
-		author: "cat 3",
-	},
-	{
-		id:     "0004",
-		title:  "aa bird 4",
-		author: "cat 4",
-	},
-	{
-		id:     "0005",
-		title:  "aa bird 5",
-		author: "cat 5",
+		id:    "1",
+		name:  "Blue Bird",
+		pages: "500",
 	},
 }
 
 func getBooks(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, bookshelf)
 }
+
 func getBook(c *gin.Context) {
+	id := c.Param("id")
+	for i := range bookshelf {
+		if bookshelf[i].id == id {
+			c.IndentedJSON(http.StatusOK, bookshelf[i])
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "not found"})
 }
+
 func addBook(c *gin.Context) {
+	var book Book
+	c.BindJSON(&book)
+	bookshelf = append(bookshelf, book)
+	c.IndentedJSON(http.StatusOK, bookshelf[len(bookshelf)-1])
 }
+
 func deleteBook(c *gin.Context) {
+	id := c.Param("id")
+	for i := range bookshelf {
+		if bookshelf[i].id == id {
+			c.IndentedJSON(http.StatusOK, bookshelf[i])
+			bookshelf = append(bookshelf[:i], bookshelf[i+1:]...)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "not found"})
 }
+
 func updateBook(c *gin.Context) {
+	var book Book
+	id := c.Param("id")
+	c.BindJSON(&book)
+	for i := range bookshelf {
+		if bookshelf[i].id == id {
+			bookshelf[i] = book
+			c.IndentedJSON(http.StatusOK, bookshelf[i])
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "not found"})
 }
+
 func main() {
 	r := gin.Default()
 	r.RedirectFixedPath = true
 	r.GET("/bookshelf", getBooks)
+	r.GET("/bookshelf/:id", getBook)
+	r.POST("/bookshelf", addBook)
+	r.DELETE("/bookshelf/:id", deleteBook)
+	r.PUT("/bookshelf/:id", updateBook)
 
 	port := "8080"
 	if v := os.Getenv("PORT"); len(v) > 0 {
