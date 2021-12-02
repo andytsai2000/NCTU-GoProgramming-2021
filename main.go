@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -101,13 +100,6 @@ func ResetDBTable(db *sql.DB) {
 	}
 }
 
-func reset(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ResetDBTable(db)
-		fmt.Fprintf(w, "reset complete !")
-	}
-}
-
 func main() {
 	if err := godotenv.Load(); err != nil {
 		//Do nothing
@@ -131,9 +123,6 @@ func main() {
 	r.POST("/bookshelf", addBook(db))
 	r.DELETE("/bookshelf/:Id", deleteBook(db))
 	r.PUT("/bookshelf/:Id", updateBook(db))
-
-	//reset db
-	http.HandleFunc("/bookshelf/reset", reset(db))
 
 	r.Run(":" + port)
 }
